@@ -4,7 +4,7 @@ import ru.practicum.shareit.user.model.User;
 
 import java.util.Map;
 
-public interface UserStorage {
+public interface UserRepository {
     Map<Long, User> findAllUsers();
 
     User getUserById(Long userId);

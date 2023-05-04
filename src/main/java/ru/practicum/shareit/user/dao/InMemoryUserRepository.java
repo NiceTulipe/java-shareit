@@ -13,7 +13,7 @@ import java.util.*;
 
 @Component
 @Slf4j
-public class InMemoryUserStorage implements UserStorage {
+public class InMemoryUserRepository implements UserRepository {
     private final Map<Long, User> users = new HashMap<>();
 
     Map<Long, String> emails = new HashMap<>();

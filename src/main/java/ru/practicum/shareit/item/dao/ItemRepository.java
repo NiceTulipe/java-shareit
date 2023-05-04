@@ -5,7 +5,7 @@ import ru.practicum.shareit.user.model.User;
 
 import java.util.List;
 
-public interface ItemStorage {
+public interface ItemRepository {
     List<Item> getItemsOwner(User user);
 
     List<Item> getItemsText(String text);

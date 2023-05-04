@@ -53,14 +53,6 @@ public class ErrorHandlerController {
         return Map.of("Validation object fault, check your actions", exception.getMessage());
     }
 
-//        @ExceptionHandler
-//        @ResponseStatus(HttpStatus.CONFLICT)
-//        public Map<String, String> handlerEmailConflict(final EmailConflictException exception) {
-//            log.warn("Error! Validation fault, server status: '{}' text message: '{}'",
-//                    HttpStatus.CONFLICT, exception.getMessage());
-//            return Map.of("EMAIL ERROR. ", exception.getMessage());
-//        }
-
     @ExceptionHandler
     @ResponseStatus(HttpStatus.INTERNAL_SERVER_ERROR)
     public Map<String, String> handleThrowable(final Throwable exception) {

@@ -16,9 +16,6 @@ public class UserDto {
 
     @NotBlank
     @Email(message = "введен некорректный email")
-    @Pattern(regexp = "^[_A-Za-z0-9-\\+]+(\\.[_A-Za-z0-9-]+)*@" +
-            "[A-Za-z0-9-]+(\\.[A-Za-z0-9]+)*(\\.[A-Za-z]{2,})$",
-            message = "Поле email не должно содержать спец символов")
     private final String email;
 
     @NotBlank
