@@ -44,7 +44,7 @@ public class ItemServiceImpl implements ItemService {
     @Override
     public ItemDto update(Long ownerId, Long itemId, ItemDto itemDto) {
         userStorage.checkerUserID(ownerId);
-        if (itemStorage.getItem(itemId).getOwner().getId() !=(ownerId)) {
+        if (!itemStorage.getItem(itemId).getOwner().getId().equals(ownerId)) {
             throw new ObjectNotFoundException("User not found");
         } else {
             Item item = ItemMapper.toItem(itemDto);
