@@ -1,10 +1,14 @@
 package ru.practicum.shareit.booking.mapper;
 
+import ru.practicum.shareit.booking.dto.BookItemRequestDto;
 import ru.practicum.shareit.booking.dto.BookingDto;
 import ru.practicum.shareit.booking.dto.ItemBookingInfoDto;
 import ru.practicum.shareit.booking.model.Booking;
+import ru.practicum.shareit.booking.model.BookingStatus;
 import ru.practicum.shareit.item.mapper.ItemMapper;
+import ru.practicum.shareit.item.model.Item;
 import ru.practicum.shareit.user.mapper.UserMapper;
+import ru.practicum.shareit.user.model.User;
 
 import java.util.List;
 import java.util.stream.Collectors;
@@ -35,5 +39,15 @@ public class BookingMapper {
                 booking.getBooker().getId(),
                 booking.getStart(),
                 booking.getEnd());
+    }
+
+    public static Booking toBooking(BookItemRequestDto bookingDto, Item item, User user) {
+        Booking booking = new Booking();
+        booking.setBooker(user);
+        booking.setStart(bookingDto.getStart());
+        booking.setEnd(bookingDto.getEnd());
+        booking.setItem(item);
+        booking.setStatus(BookingStatus.WAITING);
+        return booking;
     }
 }

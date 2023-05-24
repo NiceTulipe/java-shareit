@@ -66,13 +66,4 @@ public class ErrorHandlerController {
         log.warn("400 {}", exception.getMessage());
         return new ErrorResponse(exception.getMessage());
     }
-
-    @ExceptionHandler
-    @ResponseStatus(HttpStatus.BAD_REQUEST)
-    public Map<String, String> handleUnsupportedStatusException(final UnsupportedStatus exception) {
-        log.warn("Error! Unsupported Status, server status: '{}' text message: '{}'",
-                HttpStatus.BAD_REQUEST, exception.getMessage());
-        return Map.of("Unknown state: UNSUPPORTED_STATUS", exception.getMessage());
-    }
-
 }

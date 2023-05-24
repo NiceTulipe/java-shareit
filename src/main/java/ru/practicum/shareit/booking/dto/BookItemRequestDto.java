@@ -14,7 +14,7 @@ import java.time.LocalDateTime;
 @Builder
 @AllArgsConstructor
 @NoArgsConstructor
-public class BookingDtoShort {
+public class BookItemRequestDto {
     @NotNull
     private Long itemId;
     @NotNull

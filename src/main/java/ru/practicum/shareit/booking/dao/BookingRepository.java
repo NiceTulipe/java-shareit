@@ -32,29 +32,27 @@ public interface BookingRepository extends JpaRepository<Booking, Long> {
             long userId,
             BookingStatus status);
 
-    @Query(nativeQuery = true, value = "select * from bookings b " +
-            "inner join items i on b.item_id = i.id " +
-            "where i.owner_id = :ownerId " +
-            "and b.end_date < :time " +
-            "order by b.start_date desc")
+    @Query("select b " +
+            "from Booking b " +
+            "where b.item.owner.id = ?1 " +
+            "and ?2 > b.end order by b.start desc")
     List<Booking> findAllPastBookingsOwner(
             Long ownerId,
             LocalDateTime time);
 
-    @Query(nativeQuery = true, value = "select * from bookings b " +
-            "inner join items i on b.item_id = i.id " +
-            "where i.owner_id = :ownerId " +
-            "and b.start_date > :time " +
-            "order by b.start_date desc")
+
+    @Query("select b " +
+            "from Booking b " +
+            "where b.item.owner.id = ?1 " +
+            "and ?2 < b.start order by b.start desc")
     List<Booking> findAllFutureBookingsOwner(
             Long ownerId,
             LocalDateTime time);
 
-    @Query(nativeQuery = true, value = "select * from bookings b " +
-            "inner join items i on b.item_id = i.id " +
-            "where i.owner_id = :ownerId " +
-            "and :time between b.start_date and b.end_date " +
-            "order by b.start_date desc")
+    @Query("select b " +
+            "from Booking b " +
+            "where b.item.owner.id = ?1 " +
+            "and ?2 between b.start and b.end")
     List<Booking> findAllCurrentBookingsOwner(
             Long ownerId,
             LocalDateTime time);

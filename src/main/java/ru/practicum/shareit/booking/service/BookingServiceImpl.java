@@ -5,7 +5,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import ru.practicum.shareit.booking.dao.BookingRepository;
 import ru.practicum.shareit.booking.dto.BookingDto;
-import ru.practicum.shareit.booking.dto.BookingDtoShort;
+import ru.practicum.shareit.booking.dto.BookItemRequestDto;
 import ru.practicum.shareit.booking.mapper.BookingMapper;
 import ru.practicum.shareit.booking.model.Booking;
 import ru.practicum.shareit.booking.model.BookingState;
@@ -20,6 +20,7 @@ import ru.practicum.shareit.user.model.User;
 
 import javax.transaction.Transactional;
 import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 
@@ -36,7 +37,7 @@ public class BookingServiceImpl implements BookingService {
 
     @Transactional
     @Override
-    public BookingDto addBooking(Long bookerId, BookingDtoShort bookingDto) {
+    public BookingDto addBooking(Long bookerId, BookItemRequestDto bookingDto) {
         checkDates(bookingDto);
         User user = checkUser(bookerId);
         Item item = itemRepository.findById(bookingDto.getItemId()).orElseThrow(()
@@ -48,14 +49,7 @@ public class BookingServiceImpl implements BookingService {
         if (ownerId.equals(bookerId)) {
             throw new ObjectNotFoundException("Пользователь является обладатлем вещи");
         }
-        Booking booking = new Booking();
-        booking.setBooker(user);
-        booking.setStart(bookingDto.getStart());
-        booking.setEnd(bookingDto.getEnd());
-        booking.setItem(item);
-        booking.setStatus(BookingStatus.WAITING);
-        bookingRepository.save(booking);
-        return toBookingDto(booking);
+        return toBookingDto(bookingRepository.save(BookingMapper.toBooking(bookingDto, item, user)));
     }
 
     @Transactional
@@ -80,13 +74,10 @@ public class BookingServiceImpl implements BookingService {
     @Transactional
     @Override
     public BookingDto getBooking(Long bookerId, Long id) {
-        Booking booking = bookingRepository.findById(id).orElseThrow(() ->
-                new ObjectNotFoundException("Бронь под номером не найдена " + id));
-        if (booking.getBooker().getId().equals(bookerId) || booking.getItem().getOwner().getId().equals(bookerId)) {
-            return BookingMapper.toBookingDto(booking);
-        } else {
-            throw new ObjectNotFoundException("К брони имеют доступ лишь пользователь и обладатель");
-        }
+        return bookingRepository.findById(id)
+                .filter(b -> b.getBooker().getId() == bookerId || b.getItem().getOwner().getId() == bookerId)
+                .map(BookingMapper::toBookingDto)
+                .orElseThrow(() -> new ObjectNotFoundException("Booking with id= " + bookerId + " not found"));
     }
 
     @Transactional
@@ -95,28 +86,35 @@ public class BookingServiceImpl implements BookingService {
         User user = checkUser(userId);
         BookingState stateFromText = BookingState.getStateFromText(state);
         LocalDateTime now = LocalDateTime.now();
+        List<Booking> bookings = new ArrayList<>();
         switch (stateFromText) {
             case ALL:
-                return BookingMapper.toBookingDtoList(bookingRepository
-                        .findAllByBooker_IdOrderByStartDesc(userId));
+                bookings = bookingRepository
+                        .findAllByBooker_IdOrderByStartDesc(userId);
+                break;
             case CURRENT:
-                return BookingMapper.toBookingDtoList(bookingRepository
-                        .findAllByBooker_IdAndEndIsAfterAndStartIsBeforeOrderByStartDesc(userId, now, now));
+                bookings = bookingRepository
+                        .findAllByBooker_IdAndEndIsAfterAndStartIsBeforeOrderByStartDesc(userId, now, now);
+                break;
             case PAST:
-                return BookingMapper.toBookingDtoList(bookingRepository
-                        .findAllByBooker_IdAndEndIsBeforeOrderByStartDesc(userId, now));
+                bookings = bookingRepository
+                        .findAllByBooker_IdAndEndIsBeforeOrderByStartDesc(userId, now);
+                break;
             case FUTURE:
-                return BookingMapper.toBookingDtoList(bookingRepository
-                        .findAllByBooker_IdAndStartIsAfterOrderByStartDesc(userId, now));
+                bookings = bookingRepository
+                        .findAllByBooker_IdAndStartIsAfterOrderByStartDesc(userId, now);
+                break;
             case WAITING:
-                return BookingMapper.toBookingDtoList(bookingRepository
+                bookings = bookingRepository
                         .findAllByBooker_IdAndStartIsAfterAndStatusIsOrderByStartDesc(userId, now,
-                                BookingStatus.WAITING));
+                                BookingStatus.WAITING);
+                break;
             case REJECTED:
-                return BookingMapper.toBookingDtoList(bookingRepository
-                        .findAllByBooker_IdAndStatusIsOrderByStartDesc(userId, BookingStatus.REJECTED));
+                bookings = bookingRepository
+                        .findAllByBooker_IdAndStatusIsOrderByStartDesc(userId, BookingStatus.REJECTED);
+                break;
         }
-        throw new RequestFailedException(String.format("Unknown state: %s", state));
+        return BookingMapper.toBookingDtoList(bookings);
     }
 
     @Transactional
@@ -125,31 +123,38 @@ public class BookingServiceImpl implements BookingService {
         User user = checkUser(ownerId);
         BookingState stateFromText = BookingState.getStateFromText(state);
         LocalDateTime now = LocalDateTime.now();
+        List<Booking> bookings = new ArrayList<>();
         switch (stateFromText) {
             case ALL:
-                return BookingMapper.toBookingDtoList(bookingRepository
-                        .findAllByOwnerItems(ownerId));
+                bookings = bookingRepository
+                        .findAllByOwnerItems(ownerId);
+                break;
             case CURRENT:
-                return BookingMapper.toBookingDtoList(bookingRepository
-                        .findAllCurrentBookingsOwner(ownerId, now));
+                bookings = bookingRepository
+                        .findAllCurrentBookingsOwner(ownerId, now);
+                break;
             case PAST:
-                return BookingMapper.toBookingDtoList(bookingRepository
-                        .findAllPastBookingsOwner(ownerId, now));
+                bookings = bookingRepository
+                        .findAllPastBookingsOwner(ownerId, now);
+                break;
             case FUTURE:
-                return BookingMapper.toBookingDtoList(bookingRepository
-                        .findAllFutureBookingsOwner(ownerId, now));
+                bookings = bookingRepository
+                        .findAllFutureBookingsOwner(ownerId, now);
+                break;
             case WAITING:
-                return BookingMapper.toBookingDtoList(bookingRepository
-                        .findByOwnerAndState(ownerId, BookingStatus.WAITING));
+                bookings = bookingRepository
+                        .findByOwnerAndState(ownerId, BookingStatus.WAITING);
+                break;
             case REJECTED:
-                return BookingMapper.toBookingDtoList(bookingRepository
-                        .findByOwnerAndState(ownerId, BookingStatus.REJECTED));
+                bookings = bookingRepository
+                        .findByOwnerAndState(ownerId, BookingStatus.REJECTED);
+                break;
         }
-        throw new RequestFailedException(String.format("Unknown state: %s", state));
+        return BookingMapper.toBookingDtoList(bookings);
     }
 
 
-    private void checkDates(BookingDtoShort bookingDto) {
+    private void checkDates(BookItemRequestDto bookingDto) {
         if (bookingDto.getStart().isAfter(bookingDto.getEnd()) ||
                 bookingDto.getStart().isEqual(bookingDto.getEnd())) {
             throw new ValidationException("Ошибка со временем бронирования");

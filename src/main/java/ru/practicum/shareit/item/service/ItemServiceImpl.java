@@ -48,21 +48,21 @@ public class ItemServiceImpl implements ItemService {
         if (ownerId == null) {
             throw new ValidationException("Owner ID не может быть null");
         }
-
         if (itemDto.getName() == null || itemDto.getName().isBlank()) {
             throw new ValidationException("Название не может быть пустой");
-        } else if (itemDto.getDescription() == null || itemDto.getDescription().isBlank()) {
-            throw new ValidationException("Описание не может быть пустой");
-        } else if (itemDto.getAvailable() == null) {
-            throw new ValidationException("Статус не может быть пустой");
-        } else {
-            checkOwner(ownerId);
-            Item item = ItemMapper.toItem(itemDto);
-            Optional<User> user = userRepository.findById(ownerId);
-            item.setOwner(user.get());
-            Item newItem = itemRepository.save(item);
-            return ItemMapper.toItemDto(newItem);
         }
+        if (itemDto.getDescription() == null || itemDto.getDescription().isBlank()) {
+            throw new ValidationException("Описание не может быть пустой");
+        }
+        if (itemDto.getAvailable() == null) {
+            throw new ValidationException("Статус не может быть пустой");
+        }
+        checkOwner(ownerId);
+        Item item = ItemMapper.toItem(itemDto);
+        Optional<User> user = userRepository.findById(ownerId);
+        item.setOwner(user.get());
+        Item newItem = itemRepository.save(item);
+        return ItemMapper.toItemDto(newItem);
     }
 
     @Transactional
@@ -70,7 +70,9 @@ public class ItemServiceImpl implements ItemService {
     public ItemDto update(Long ownerId, Long itemId, ItemDto itemDto) {
         checkOwner(ownerId);
         Item oldItem = itemRepository.findById(itemId).get();
-        if (oldItem.getOwner().getId().equals(ownerId)) {
+        if (!oldItem.getOwner().getId().equals(ownerId)) {
+            throw new ObjectNotFoundException("Пользователь не найден");
+        } else {
             Item item = ItemMapper.toItem(itemDto);
             User user = userRepository.findById(ownerId).get();
             item.setOwner(user);
@@ -89,8 +91,6 @@ public class ItemServiceImpl implements ItemService {
             }
             Item newItem = itemRepository.save(item);
             return ItemMapper.toItemDto(newItem);
-        } else {
-            throw new ObjectNotFoundException("Пользователь не найден");
         }
     }
 
@@ -128,19 +128,13 @@ public class ItemServiceImpl implements ItemService {
         if (authorBooked.isEmpty()) {
             throw new ValidationException("Неверные параметры");
         }
-        Comment comment = new Comment();
-        comment.setAuthor(user);
-        comment.setCreated(LocalDateTime.now());
-        comment.setItem(item);
-        comment.setText(commentDto.getText());
-        commentRepository.save(comment);
-        CommentDto newComment = CommentMapper.toCommentDto(comment);
+        CommentDto newComment = CommentMapper.toCommentDto(commentRepository
+                .save(CommentMapper.toComment(commentDto, user, item)));
         newComment.setAuthorName(user.getName());
         return newComment;
     }
 
     private List<ItemsDto> fillWithBookingInfo(List<Item> items, Long userId) {
-        //получили все комменты и букинги
         Map<Item, List<Comment>> comments = commentRepository.findByItemIn(
                         items, Sort.by(DESC, "created"))
                 .stream()
