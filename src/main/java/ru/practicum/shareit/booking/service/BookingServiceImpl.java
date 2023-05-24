@@ -75,7 +75,8 @@ public class BookingServiceImpl implements BookingService {
     @Override
     public BookingDto getBooking(Long bookerId, Long id) {
         return bookingRepository.findById(id)
-                .filter(b -> b.getBooker().getId() == bookerId || b.getItem().getOwner().getId() == bookerId)
+                .filter(b -> Objects.equals(b.getBooker().getId(), bookerId)
+                        || Objects.equals(b.getItem().getOwner().getId(), bookerId))
                 .map(BookingMapper::toBookingDto)
                 .orElseThrow(() -> new ObjectNotFoundException("Booking with id= " + bookerId + " not found"));
     }
