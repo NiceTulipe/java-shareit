@@ -13,11 +13,11 @@ import javax.validation.constraints.Positive;
 @AllArgsConstructor
 public class ItemDto {
     @Positive
-    private Long id;
-    private String name;
-    private String description;
-    private Boolean available;
-    private User ownerId;
-    private Long request;
+    private final Long id;
+    private final String name;
+    private final String description;
+    private final Boolean available;
+    private final User ownerId;
+    private final Long request;
 }
 

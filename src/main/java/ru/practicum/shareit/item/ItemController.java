@@ -2,8 +2,11 @@ package ru.practicum.shareit.item;
 
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
+import ru.practicum.shareit.item.dto.CommentDto;
 import ru.practicum.shareit.item.dto.ItemDto;
+import ru.practicum.shareit.item.dto.ItemsDto;
 import ru.practicum.shareit.item.service.ItemService;
 import ru.practicum.shareit.utils.Headers;
 
@@ -37,13 +40,14 @@ public class ItemController {
     }
 
     @GetMapping("/{id}")
-    public ItemDto getItem(@PathVariable Long id) {
+    public ItemsDto getItem(@RequestHeader(value = Headers.IdOwner) Long userId,
+                            @PathVariable Long id) {
         log.info("Получен запрос на получение предмета к эндпоинту: 'GET /items/id'");
-        return itemService.getItem(id);
+        return itemService.getItem(id, userId);
     }
 
     @GetMapping()
-    public List<ItemDto> getItems(@RequestHeader(value = Headers.IdOwner) Long idOwner) {
+    public List<ItemsDto> getItems(@RequestHeader(value = Headers.IdOwner) Long idOwner) {
         log.info("Получен запрос на получение всех предметов пользователя к эндпоинту: 'GET /items'");
         return itemService.getItemsOwner(idOwner);
     }
@@ -52,5 +56,12 @@ public class ItemController {
     public List<ItemDto> getItems(@RequestParam(name = "text") String text) {
         log.info("Получен запрос на получение всех предметов имеющих в нвзвании или описании заданный текст к эндпоинту: 'GET /items/search'");
         return itemService.getItemsText(text);
+    }
+
+    @PostMapping("/{id}/comment")
+    public CommentDto addComment(@RequestHeader(value = Headers.IdOwner) Long authorId,
+                                 @PathVariable Long id,
+                                 @Validated @RequestBody CommentDto commentBody) {
+        return itemService.addComment(authorId, id, commentBody);
     }
 }

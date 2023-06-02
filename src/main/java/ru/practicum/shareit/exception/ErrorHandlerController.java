@@ -59,4 +59,11 @@ public class ErrorHandlerController {
         log.warn("Error! Server status: '{}' text message: '{}'", HttpStatus.INTERNAL_SERVER_ERROR, exception.getMessage());
         return Map.of("Server Error", exception.getMessage());
     }
+
+    @ExceptionHandler
+    @ResponseStatus(HttpStatus.BAD_REQUEST)
+    public ErrorResponse handleRequestFailedException(RequestFailedException exception) {
+        log.warn("400 {}", exception.getMessage());
+        return new ErrorResponse(exception.getMessage());
+    }
 }
