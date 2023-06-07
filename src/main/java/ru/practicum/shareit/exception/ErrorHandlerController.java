@@ -29,13 +29,13 @@ public class ErrorHandlerController {
         return Map.of("Null detected, check your actions", exception.getMessage());
     }
 
-    @ExceptionHandler
-    @ResponseStatus(HttpStatus.CONFLICT)
-    public Map<String, String> handlerEmailConflict(final EmailEarlyContains exception) {
-        log.warn("Error! Validation fault, server status: '{}' text message: '{}'",
-                HttpStatus.CONFLICT, exception.getMessage());
-        return Map.of("EMAIL ERROR. ", exception.getMessage());
-    }
+//    @ExceptionHandler
+//    @ResponseStatus(HttpStatus.CONFLICT)
+//    public Map<String, String> handlerEmailConflict(final EmailEarlyContains exception) {
+//        log.warn("Error! Validation fault, server status: '{}' text message: '{}'",
+//                HttpStatus.CONFLICT, exception.getMessage());
+//        return Map.of("EMAIL ERROR. ", exception.getMessage());
+//    }
 
     @ExceptionHandler
     @ResponseStatus(HttpStatus.BAD_REQUEST)

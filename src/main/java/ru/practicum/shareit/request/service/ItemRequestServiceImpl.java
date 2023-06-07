@@ -69,7 +69,9 @@ public class ItemRequestServiceImpl implements ItemRequestService {
     @Transactional
     @Override
     public List<ItemRequestDto> getAllRequest(Long userId, Integer from, Integer size) {
-        User user = checkUser(userId);
+        if (!userRepository.existsById(userId)) {
+            throw new ObjectNotFoundException("Пользователь не найден");
+        }
         Sort sort = Sort.by(Sort.Direction.DESC, "created");
         PageRequest pageRequest = PageRequest.of(from / size, size, sort);
         List<ItemRequestDto> itemRequestDtoList = itemRequestRepository.findAllByRequestorIdNot(
@@ -83,7 +85,7 @@ public class ItemRequestServiceImpl implements ItemRequestService {
         return itemRequestDtoList;
     }
 
-    private User checkUser(Long checkedUserId) {
+    public User checkUser(Long checkedUserId) {
         User user = userRepository.findById(checkedUserId).orElseThrow(() -> {
             throw new ObjectNotFoundException("Пользователь не найден");
         });

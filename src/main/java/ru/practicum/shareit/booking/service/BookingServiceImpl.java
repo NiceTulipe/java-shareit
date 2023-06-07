@@ -166,7 +166,7 @@ public class BookingServiceImpl implements BookingService {
     }
 
 
-    private User checkUser(Long checkedUserId) {
+    public User checkUser(Long checkedUserId) {
         User user = userRepository.findById(checkedUserId).orElseThrow(() -> {
             throw new ObjectNotFoundException("Пользователь не найден");
         });

@@ -10,6 +10,9 @@ import org.mockito.Mockito;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.mockito.junit.jupiter.MockitoSettings;
 import org.mockito.quality.Strictness;
+import org.springframework.data.domain.PageImpl;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Sort;
 import ru.practicum.shareit.exception.ObjectNotFoundException;
 import ru.practicum.shareit.item.dao.ItemRepository;
 import ru.practicum.shareit.item.model.Item;
@@ -20,7 +23,9 @@ import ru.practicum.shareit.request.model.ItemRequest;
 import ru.practicum.shareit.request.service.ItemRequestService;
 import ru.practicum.shareit.request.service.ItemRequestServiceImpl;
 import ru.practicum.shareit.user.dao.UserRepository;
+import ru.practicum.shareit.user.dto.UserDto;
 import ru.practicum.shareit.user.model.User;
+import ru.practicum.shareit.user.service.UserService;
 
 import java.time.LocalDateTime;
 import java.util.ArrayList;
@@ -41,9 +46,14 @@ public class RequestServiceUnitTest {
     ItemRepository mockItemRepository = Mockito.mock(ItemRepository.class);
 
     ItemRequestService mockItemRewuestService = Mockito.mock((ItemRequestService.class));
+
+    UserService mockUserService = Mockito.mock(UserService.class);
+
+
     @InjectMocks
     private ItemRequestServiceImpl itemRequestService;
     private User user;
+    private UserService userService;
     private ItemRequestDto itemRequestDto;
     private ItemRequest itemRequest;
     private Item item;
@@ -88,6 +98,7 @@ public class RequestServiceUnitTest {
         assertEquals(0, requestDtoList.size());
     }
 
+
     @Test
     void getRequestsInformationWrongUser() {
         when(mockUserRepository.findById(anyLong()))
@@ -121,6 +132,41 @@ public class RequestServiceUnitTest {
         when(mockUserRepository.findById(userId)).thenReturn(Optional.empty());
 
         assertThrows(ObjectNotFoundException.class, () -> itemRequestService.getAllUserRequest(userId));
+    }
+
+    @Test
+    public void getAllRequest_validInput_returnsList() {
+        Long userId = 1L;
+        Integer from = 0;
+        Integer size = 10;
+        User user = new User();
+        user.setId(userId);
+        when(mockUserRepository.existsById(userId)).thenReturn(true);
+
+        List<ItemRequest> itemRequests = new ArrayList<>();
+        ItemRequest itemRequest = new ItemRequest();
+        itemRequest.setId(1L);
+        User requestor = new User();
+        requestor.setId(2L);
+        itemRequest.setRequestor(requestor);
+        itemRequests.add(itemRequest);
+        when(mockItemRequestRepository.findAllByRequestorIdNot(userId, PageRequest.of(from / size, size, Sort.by(Sort.Direction.DESC, "created"))))
+                .thenReturn(new PageImpl<>(itemRequests));
+        when(mockUserRepository.findById(requestor.getId())).thenReturn(Optional.of(requestor));
+        List<ItemRequestDto> expectedItemRequestDtoList = new ArrayList<>();
+        ItemRequestDto itemRequestDto = new ItemRequestDto();
+        itemRequestDto.setId(1L);
+        UserDto requestorDto = new UserDto(
+                2l,
+                null,
+                null
+        );
+        itemRequestDto.setRequestor(requestorDto);
+        itemRequestDto.setItems(new ArrayList<>());
+        expectedItemRequestDtoList.add(itemRequestDto);
+        List<ItemRequestDto> actualItemRequestDtoList = itemRequestService.getAllRequest(userId, from, size);
+
+        assertEquals(expectedItemRequestDtoList, actualItemRequestDtoList);
     }
 
 }
