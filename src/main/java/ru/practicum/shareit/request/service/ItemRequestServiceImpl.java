@@ -46,10 +46,10 @@ public class ItemRequestServiceImpl implements ItemRequestService {
 
     @Transactional
     @Override
-    public ItemRequestDto getById(long userId, long RequestId) {
+    public ItemRequestDto getById(long userId, long requestId) {
         User user = checkUser(userId);
-        ItemRequest itemRequest = itemRequestRepository.findById(RequestId)
-                .orElseThrow(() -> new ObjectNotFoundException("Запрос под номером " + RequestId + " не найден"));
+        ItemRequest itemRequest = itemRequestRepository.findById(requestId)
+                .orElseThrow(() -> new ObjectNotFoundException("Запрос под номером " + requestId + " не найден"));
         ItemRequestDto itemRequestDto = ItemRequestMapper.toItemRequestDto(itemRequest);
         List<Item> itemList = itemRepository.findByRequestId(itemRequestDto.getId());
         itemRequestDto.setItems(ItemMapper.toItemDtoList(itemList));

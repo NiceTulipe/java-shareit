@@ -62,7 +62,7 @@ public class BookingController {
     public List<BookingDto> getOwnerBookedItemList(@RequestParam(defaultValue = "ALL") String state,
                                                    @RequestHeader(value = Headers.IdOwner) Long userId,
                                                    @RequestParam(value = "size", defaultValue = "10") @Positive int size,
-                                                   @RequestParam(value = "from", defaultValue = "0") @PositiveOrZero int from){
+                                                   @RequestParam(value = "from", defaultValue = "0") @PositiveOrZero int from) {
         checkerState(state);
         return bookingService.ownerItemsBookingLists(state, userId, from, size);
     }

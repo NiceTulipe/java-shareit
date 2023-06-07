@@ -40,7 +40,7 @@ public class RequestServiceIntegTest {
     }
 
     private void createRequestor() {
-        UserDto userDto = new UserDto(1l,
+        UserDto userDto = new UserDto(1L,
                 "mail@gmail.com",
                 "name"
         );

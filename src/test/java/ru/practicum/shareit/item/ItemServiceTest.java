@@ -58,7 +58,7 @@ public class ItemServiceTest {
     private CommentDto commentDto;
 
     @Test
-    void TestAddItem_validAdd() {
+    void testAddItem_validAdd() {
         Long ownerId = 1L;
         ItemDto itemDto = new ItemDto(null,
                 "1st Item",
@@ -84,13 +84,13 @@ public class ItemServiceTest {
                 "description",
                 true,
                 null,
-                3l);
+                3L);
         ItemDto updateItemDto = new ItemDto(1L,
                 "test_update",
                 "description_update",
                 true,
                 null,
-                3l);
+                3L);
 
         User user = new User();
         user.setId(ownerId);
@@ -113,13 +113,13 @@ public class ItemServiceTest {
         assertTrue(result.getAvailable());
         assertEquals(3L, result.getRequestId());
 
-        ItemDto result_updated = itemService.update(ownerId, itemId, updateItemDto);
-        assertNotNull(result_updated);
+        ItemDto resultUpdated = itemService.update(ownerId, itemId, updateItemDto);
+        assertNotNull(resultUpdated);
         assertEquals(itemId, result.getId());
-        assertEquals("test_update", result_updated.getName());
-        assertEquals("description_update", result_updated.getDescription());
-        assertTrue(result_updated.getAvailable());
-        assertEquals(3L, result_updated.getRequestId());
+        assertEquals("test_update", resultUpdated.getName());
+        assertEquals("description_update", resultUpdated.getDescription());
+        assertTrue(resultUpdated.getAvailable());
+        assertEquals(3L, resultUpdated.getRequestId());
     }
 
     @Test

@@ -35,13 +35,13 @@ public class BookingRepositoryTest {
         return user;
     }
 
-    public static Item makeItem(Long id, String name, String description, User user, boolean Available) {
+    public static Item makeItem(Long id, String name, String description, User user, boolean available) {
         Item item = new Item();
         item.setId(id);
         item.setName(name);
         item.setDescription(description);
         item.setOwner(user);
-        item.setAvailable(Available);
+        item.setAvailable(available);
         return item;
     }
 

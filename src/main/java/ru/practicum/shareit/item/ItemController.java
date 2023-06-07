@@ -51,7 +51,7 @@ public class ItemController {
     @GetMapping()
     public List<ItemsDto> getItems(@RequestHeader(value = Headers.IdOwner) Long idOwner,
                                    @PositiveOrZero @RequestParam(defaultValue = "0") Integer from,
-                                   @Positive @RequestParam(defaultValue = "10") Integer size){
+                                   @Positive @RequestParam(defaultValue = "10") Integer size) {
         log.info("Получен запрос на получение всех предметов пользователя к эндпоинту: 'GET /items'");
         return itemService.getItemsOwner(idOwner, from, size);
     }
