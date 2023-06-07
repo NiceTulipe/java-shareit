@@ -71,7 +71,6 @@ public class ItemServiceTest {
         Mockito.when(itemRepository.save(any(Item.class))).thenReturn(new Item());
 
         ItemDto result = itemService.addItem(ownerId, itemDto);
-
         assertNotNull(result);
     }
 
