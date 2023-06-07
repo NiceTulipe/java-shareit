@@ -18,6 +18,7 @@ import ru.practicum.shareit.booking.service.BookingService;
 import ru.practicum.shareit.booking.service.BookingServiceImpl;
 import ru.practicum.shareit.exception.ObjectNotFoundException;
 import ru.practicum.shareit.exception.RequestFailedException;
+import ru.practicum.shareit.exception.ValidationException;
 import ru.practicum.shareit.item.dto.ItemDto;
 import ru.practicum.shareit.item.service.ItemService;
 import ru.practicum.shareit.user.dto.UserDto;
@@ -71,6 +72,52 @@ public class BookingServiceIntegrationTest {
         BookingDto createdBooking = bookingService.addBooking(createdBooker.getId(), bookingToCreate);
 
         test(createdBooking, BookingStatus.WAITING, createdBooker, itemDto);
+    }
+
+    @Test
+    void ownerTryBeBooker_mustBeFail() {
+        UserDto createdOwner = userService.addUser(owner);
+        itemService.addItem(createdOwner.getId(), itemDtoToCreate);
+        Exception exception = assertThrows(ObjectNotFoundException.class, ()
+                -> bookingService.addBooking(createdOwner.getId(), bookingToCreate));
+        assertEquals("Пользователь является обладатлем вещи", exception.getMessage());
+    }
+
+    @Test
+    void bookerTryTakeNotAvailableItem() {
+        UserDto createdOwner = userService.addUser(owner);
+        UserDto createdBooker = userService.addUser(booker);
+
+        ItemDto itemDto1 = new ItemDto(
+                1L,
+                "name",
+                "discript",
+                false,
+                null,
+                null
+        );
+        BookItemRequestDto bookDto = new BookItemRequestDto(
+                itemDto1.getId(),
+                LocalDateTime.now().plusHours(1),
+                LocalDateTime.now().plusHours(2)
+        );
+        itemService.addItem(createdOwner.getId(), itemDto1);
+        Exception exception = assertThrows(ValidationException.class, ()
+                -> bookingService.addBooking(createdBooker.getId(), bookDto));
+        assertEquals("Предмет с id недоступен " + itemDto1.getId(), exception.getMessage());
+    }
+
+    @Test
+    void bookerTryTakeNotAvailableItem2() {
+        UserDto createdBooker = userService.addUser(booker);
+        BookItemRequestDto bookDto = new BookItemRequestDto(
+                2L,
+                LocalDateTime.now().plusHours(1),
+                LocalDateTime.now().plusHours(2)
+        );
+        Exception exception = assertThrows(ObjectNotFoundException.class, ()
+                -> bookingService.addBooking(createdBooker.getId(), bookDto));
+        assertEquals("Предмет с id нет 2"  , exception.getMessage());
     }
 
     @ParameterizedTest
