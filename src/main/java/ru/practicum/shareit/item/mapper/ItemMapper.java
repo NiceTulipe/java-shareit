@@ -20,7 +20,7 @@ public class ItemMapper {
                 item.getName(),
                 item.getDescription(),
                 item.getAvailable(),
-                item.getRequest(),
+                item.getRequestId(),
                 lastBooking,
                 nextBooking,
                 comments
@@ -34,7 +34,7 @@ public class ItemMapper {
                 item.getDescription(),
                 item.getAvailable(),
                 item.getOwner(),
-                item.getRequest());
+                item.getRequestId());
     }
 
     public static Item toItem(ItemDto itemDto) {
@@ -44,7 +44,7 @@ public class ItemMapper {
                 itemDto.getDescription(),
                 itemDto.getAvailable(),
                 itemDto.getOwnerId(),
-                itemDto.getRequest()
+                itemDto.getRequestId()
         );
     }
 

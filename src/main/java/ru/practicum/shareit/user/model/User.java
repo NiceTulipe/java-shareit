@@ -21,6 +21,7 @@ import javax.persistence.*;
 @Getter
 @Setter
 @ToString
+@Builder
 
 
 public class User {

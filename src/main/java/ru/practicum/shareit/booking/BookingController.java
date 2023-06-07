@@ -10,12 +10,15 @@ import ru.practicum.shareit.booking.service.BookingService;
 import ru.practicum.shareit.exception.RequestFailedException;
 import ru.practicum.shareit.utils.Headers;
 
+import javax.validation.constraints.Positive;
+import javax.validation.constraints.PositiveOrZero;
 import java.util.List;
 
 /**
  * TODO Sprint add-bookings.
  */
 @RestController
+@Validated
 @Slf4j
 @RequestMapping(path = "/bookings")
 public class BookingController {
@@ -48,16 +51,20 @@ public class BookingController {
 
     @GetMapping
     public List<BookingDto> getBooking(@RequestParam(defaultValue = "ALL") String state,
-                                       @RequestHeader(value = Headers.IdOwner) Long userId) {
+                                       @RequestHeader(value = Headers.IdOwner) Long userId,
+                                       @RequestParam(defaultValue = "0") @PositiveOrZero Integer from,
+                                       @RequestParam(defaultValue = "10") @Positive Integer size)  {
         checkerState(state);
-        return bookingService.getBooking(state, userId);
+        return bookingService.getBooking(state, userId, from, size);
     }
 
     @GetMapping("/owner")
     public List<BookingDto> getOwnerBookedItemList(@RequestParam(defaultValue = "ALL") String state,
-                                                   @RequestHeader(value = Headers.IdOwner) Long userId) {
+                                                   @RequestHeader(value = Headers.IdOwner) Long userId,
+                                                   @RequestParam(value = "size", defaultValue = "10") @Positive int size,
+                                                   @RequestParam(value = "from", defaultValue = "0") @PositiveOrZero int from){
         checkerState(state);
-        return bookingService.ownerItemsBookingLists(state, userId);
+        return bookingService.ownerItemsBookingLists(state, userId, from, size);
     }
 
     private void checkerState(String state) {

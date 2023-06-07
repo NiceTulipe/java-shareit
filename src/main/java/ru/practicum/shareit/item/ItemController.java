@@ -12,6 +12,8 @@ import ru.practicum.shareit.utils.Headers;
 
 import javax.validation.Valid;
 import javax.validation.constraints.NotNull;
+import javax.validation.constraints.Positive;
+import javax.validation.constraints.PositiveOrZero;
 import java.util.List;
 
 /**
@@ -47,15 +49,19 @@ public class ItemController {
     }
 
     @GetMapping()
-    public List<ItemsDto> getItems(@RequestHeader(value = Headers.IdOwner) Long idOwner) {
+    public List<ItemsDto> getItems(@RequestHeader(value = Headers.IdOwner) Long idOwner,
+                                   @PositiveOrZero @RequestParam(defaultValue = "0") Integer from,
+                                   @Positive @RequestParam(defaultValue = "10") Integer size){
         log.info("Получен запрос на получение всех предметов пользователя к эндпоинту: 'GET /items'");
-        return itemService.getItemsOwner(idOwner);
+        return itemService.getItemsOwner(idOwner, from, size);
     }
 
     @GetMapping("/search")
-    public List<ItemDto> getItems(@RequestParam(name = "text") String text) {
+    public List<ItemDto> getItems(@RequestParam(name = "text") String text,
+                                  @PositiveOrZero @RequestParam(defaultValue = "0") Integer from,
+                                  @Positive @RequestParam(defaultValue = "10") Integer size) {
         log.info("Получен запрос на получение всех предметов имеющих в нвзвании или описании заданный текст к эндпоинту: 'GET /items/search'");
-        return itemService.getItemsText(text);
+        return itemService.getItemsText(text, from, size);
     }
 
     @PostMapping("/{id}/comment")
