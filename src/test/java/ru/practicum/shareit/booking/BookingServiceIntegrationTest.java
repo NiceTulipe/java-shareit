@@ -117,7 +117,7 @@ public class BookingServiceIntegrationTest {
         );
         Exception exception = assertThrows(ObjectNotFoundException.class, ()
                 -> bookingService.addBooking(createdBooker.getId(), bookDto));
-        assertEquals("Предмет с id нет 2"  , exception.getMessage());
+        assertEquals("Предмет с id нет 2", exception.getMessage());
     }
 
     @ParameterizedTest
