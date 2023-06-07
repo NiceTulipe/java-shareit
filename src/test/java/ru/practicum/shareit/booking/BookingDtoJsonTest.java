@@ -43,8 +43,8 @@ public class BookingDtoJsonTest {
 
         BookingDto bookingDto = BookingDto.builder()
                 .id(1L)
-                .start(dateTime.plusSeconds(1))
-                .end(dateTime.plusSeconds(2))
+                .start(dateTime.plusMinutes(1))
+                .end(dateTime.plusMinutes(2))
                 .item(itemDto)
                 .booker(userDto)
                 .status(BookingStatus.WAITING)
@@ -54,11 +54,11 @@ public class BookingDtoJsonTest {
         assertThat(result).extractingJsonPathNumberValue("$.id")
                 .isEqualTo(1);
         assertThat(result).extractingJsonPathStringValue("$.start")
-                .isEqualTo(dateTime.plusSeconds(1)
+                .isEqualTo(dateTime.plusMinutes(1)
                         .truncatedTo(ChronoUnit.SECONDS)
                         .toString());
         assertThat(result).extractingJsonPathStringValue("$.end")
-                .isEqualTo(dateTime.plusSeconds(2)
+                .isEqualTo(dateTime.plusMinutes(2)
                         .truncatedTo(ChronoUnit.SECONDS)
                         .toString());
         assertThat(result).extractingJsonPathNumberValue("$.item.id")
