@@ -73,6 +73,7 @@ public class BookingServiceImpl implements BookingService {
 
     @Transactional
     @Override
+
     public BookingDto getBooking(Long bookerId, Long id) {
         return bookingRepository.findById(id)
                 .filter(b -> Objects.equals(b.getBooker().getId(), bookerId)
