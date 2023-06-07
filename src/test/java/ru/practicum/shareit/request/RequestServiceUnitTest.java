@@ -157,7 +157,7 @@ public class RequestServiceUnitTest {
         ItemRequestDto itemRequestDto = new ItemRequestDto();
         itemRequestDto.setId(1L);
         UserDto requestorDto = new UserDto(
-                2l,
+                2L,
                 null,
                 null
         );
