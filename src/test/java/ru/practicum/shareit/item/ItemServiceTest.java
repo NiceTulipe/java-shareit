@@ -69,9 +69,7 @@ public class ItemServiceTest {
         Mockito.when(userRepository.existsById(ownerId)).thenReturn(true);
         when(userRepository.findById(anyLong())).thenReturn(Optional.of(new User()));
         Mockito.when(itemRepository.save(any(Item.class))).thenReturn(new Item());
-
         ItemDto result = itemService.addItem(ownerId, itemDto);
-
         assertNotNull(result);
     }
 
