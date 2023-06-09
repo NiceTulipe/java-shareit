@@ -17,7 +17,6 @@ import java.util.List;
 
 @DataJpaTest
 public class RequestRepositoryTest {
-
     @Autowired
     private TestEntityManager entityManager;
 
@@ -109,5 +108,4 @@ public class RequestRepositoryTest {
         Assertions.assertEquals(request.getCreated(), requests.get(0).getCreated());
         Assertions.assertEquals(user, requests.get(0).getRequestor());
     }
-
 }

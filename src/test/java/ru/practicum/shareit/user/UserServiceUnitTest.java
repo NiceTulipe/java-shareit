@@ -1,6 +1,5 @@
 package ru.practicum.shareit.user;
 
-
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -28,7 +27,6 @@ import static org.mockito.Mockito.*;
 
 @ExtendWith(MockitoExtension.class)
 public class UserServiceUnitTest {
-
     @InjectMocks
     private UserServiceImpl userService;
     @Mock
@@ -68,8 +66,8 @@ public class UserServiceUnitTest {
     public void getAllUsersExistTest() {
         when(repository.findAll())
                 .thenReturn(List.of(user, user2));
-
         List<UserDto> users = userService.getUsersList();
+
         assertThat(users, equalTo(List.of(userDto, user2Dto)));
     }
 
@@ -102,5 +100,4 @@ public class UserServiceUnitTest {
         assertEquals("", userDto.getName());
         assertNull(userDto.getEmail());
     }
-
 }

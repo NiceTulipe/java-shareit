@@ -58,6 +58,4 @@ public class RequestDtoJsonTest {
         assertThat(result).extractingJsonPathStringValue("$.items[0].name").isEqualTo("Poke Ball");
         assertThat(result).extractingJsonPathStringValue("$.items[0].description").isEqualTo("The Poke Ball is a sphere");
     }
-
-
 }

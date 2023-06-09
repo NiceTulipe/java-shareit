@@ -1,6 +1,5 @@
 package ru.practicum.shareit.booking;
 
-
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.json.JsonTest;
@@ -13,19 +12,20 @@ import ru.practicum.shareit.user.dto.UserDto;
 
 import java.io.IOException;
 import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 import java.time.temporal.ChronoUnit;
 
 import static org.assertj.core.api.AssertionsForInterfaceTypes.assertThat;
 
 @JsonTest
 public class BookingDtoJsonTest {
-
     @Autowired
     private JacksonTester<BookingDto> json;
 
     @Test
     void testItemDto() throws IOException {
         LocalDateTime dateTime = LocalDateTime.now().truncatedTo(ChronoUnit.SECONDS);
+        DateTimeFormatter dtf = DateTimeFormatter.BASIC_ISO_DATE;
 
         ItemDto itemDto = ItemDto.builder()
                 .id(1L)
@@ -34,7 +34,6 @@ public class BookingDtoJsonTest {
                 .available(true)
                 .requestId(1L)
                 .build();
-
 
         UserDto userDto = UserDto.builder()
                 .id(1L)
@@ -75,5 +74,4 @@ public class BookingDtoJsonTest {
         assertThat(result).extractingJsonPathStringValue("$.booker.email")
                 .isEqualTo("ash@gmail.com");
     }
-
 }

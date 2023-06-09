@@ -27,7 +27,6 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 
 @WebMvcTest(controllers = ItemRequestController.class)
 public class ItemRequestControllerTest {
-
     @Autowired
     private ObjectMapper objectMapper;
     @MockBean
@@ -36,7 +35,6 @@ public class ItemRequestControllerTest {
     private MockMvc mockMvc;
     private ItemRequestDto itemRequestDto;
     private User user;
-
 
     @BeforeEach
     void start() throws Exception {
@@ -89,5 +87,4 @@ public class ItemRequestControllerTest {
                         .header(Headers.IdOwner, 1L))
                 .andExpect(status().isOk());
     }
-
 }

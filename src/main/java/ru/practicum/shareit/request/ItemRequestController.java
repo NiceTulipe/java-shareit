@@ -43,13 +43,12 @@ public class ItemRequestController {
         return requestService.getAllUserRequest(userId);
     }
 
+    @Validated
     @GetMapping("/all")
     public List<ItemRequestDto> getAllRequests(@RequestHeader(value = Headers.IdOwner) Long userId,
                                                @PositiveOrZero
                                                @RequestParam(name = "from", defaultValue = "0") int from,
-                                               @Positive @RequestParam(name = "size", required = false,
-                                                       defaultValue = "10") int size) {
+                                               @Positive @RequestParam(name = "size", defaultValue = "10") int size) {
         return requestService.getAllRequest(userId, from, size);
     }
-
 }

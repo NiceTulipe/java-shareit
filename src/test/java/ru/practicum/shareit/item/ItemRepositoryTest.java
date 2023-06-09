@@ -1,6 +1,5 @@
 package ru.practicum.shareit.item;
 
-
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -26,7 +25,7 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 public class ItemRepositoryTest {
 
     @Autowired
-    ItemRepository itemRepository;
+    private final ItemRepository itemRepository = null;
 
     @Autowired
     protected TestEntityManager entityManager;
@@ -53,7 +52,6 @@ public class ItemRepositoryTest {
             user,
             "Ask some",
             LocalDateTime.now());
-
 
     @BeforeEach
     void setup() {
@@ -89,7 +87,6 @@ public class ItemRepositoryTest {
     void findItemById() {
         entityManager.persist(item);
         entityManager.flush();
-
         Item found = itemRepository.findById(1L).orElse(null);
 
         Assertions.assertNotNull(found);
@@ -106,7 +103,6 @@ public class ItemRepositoryTest {
     void findAllByOwnerIdOrderByIdAsc() {
         entityManager.persist(item);
         entityManager.flush();
-
         List<Item> found = itemRepository.findAllByOwnerIdOrderById(1L, PageRequest.of(0, 1));
 
         Assertions.assertNotNull(found);
@@ -124,7 +120,6 @@ public class ItemRepositoryTest {
     void findAllByRequestIdOrderByIdAsc() {
         entityManager.persist(item);
         entityManager.flush();
-
         List<Item> found = itemRepository.findByRequestId(1L);
 
         Assertions.assertNotNull(found);
@@ -142,7 +137,6 @@ public class ItemRepositoryTest {
     void search() {
         entityManager.persist(item);
         entityManager.flush();
-
         List<Item> found = itemRepository.getItemsText("The Poke Ball is a sphere", PageRequest.of(0, 1));
 
         Assertions.assertNotNull(found);

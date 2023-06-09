@@ -1,6 +1,5 @@
 package ru.practicum.shareit.booking;
 
-
 import lombok.RequiredArgsConstructor;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
@@ -41,8 +40,6 @@ import static ru.practicum.shareit.booking.mapper.BookingMapper.toItemBookingInf
 @RequiredArgsConstructor(onConstructor_ = @Autowired)
 @DirtiesContext(classMode = DirtiesContext.ClassMode.AFTER_EACH_TEST_METHOD)
 public class BookingServiceIntegrationTest {
-
-
     private final BookingService bookingService;
     private final BookingServiceImpl bookingServiceImpl;
     private final UserService userService;
@@ -93,7 +90,6 @@ public class BookingServiceIntegrationTest {
                 "name",
                 "discript",
                 false,
-                null,
                 null
         );
         BookItemRequestDto bookDto = new BookItemRequestDto(
@@ -260,5 +256,4 @@ public class BookingServiceIntegrationTest {
 
         assertEquals("Данной брони не существует " + bookingId, exception.getMessage());
     }
-
 }

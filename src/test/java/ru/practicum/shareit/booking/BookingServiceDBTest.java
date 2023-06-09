@@ -1,6 +1,5 @@
 package ru.practicum.shareit.booking;
 
-
 import lombok.RequiredArgsConstructor;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
@@ -36,7 +35,6 @@ import static org.hamcrest.Matchers.*;
 @DirtiesContext(classMode = DirtiesContext.ClassMode.AFTER_EACH_TEST_METHOD)
 @AutoConfigureTestDatabase(replace = AutoConfigureTestDatabase.Replace.ANY)
 public class BookingServiceDBTest {
-
     private final ItemService itemService;
     private final UserService userService;
     private final BookingService bookingService;
@@ -151,7 +149,6 @@ public class BookingServiceDBTest {
         BookingDto firstBooking = bookingService.addBooking(secondTestUser.getId(), bookItemRequestDto);
         bookingService.approve(testUser.getId(), firstBooking.getId(), true);
         BookingDto secondBooking = bookingService.addBooking(secondTestUser.getId(), secondBookItemRequestDto);
-
         List<BookingDto> bookings = bookingService.ownerItemsBookingLists("ALL",
                 testUser.getId(), 0, 3);
 
@@ -197,7 +194,6 @@ public class BookingServiceDBTest {
     void getAllBookingsRejectedStateTest() {
         BookingDto firstBooking = bookingService.addBooking(secondTestUser.getId(), bookItemRequestDto);
         bookingService.approve(testUser.getId(), firstBooking.getId(), false);
-
         List<BookingDto> rejectedBookings = bookingService.getBooking("REJECTED",
                 secondTestUser.getId(), 0, 3);
         BookingDto rejectedBooking = rejectedBookings.get(0);
@@ -220,7 +216,6 @@ public class BookingServiceDBTest {
         List<BookItemRequestDto> bookingDtos = List.of(bookingDto);
         BookingDto firstBooking = bookingService.addBooking(secondTestUser.getId(), bookingDto);
         bookingService.approve(testUser.getId(), firstBooking.getId(), true);
-
         List<BookingDto> currentBookings = bookingService.getBooking("CURRENT",
                 secondTestUser.getId(), 0, 3);
         BookingDto currentBooking = currentBookings.get(0);
@@ -242,7 +237,6 @@ public class BookingServiceDBTest {
                 .build();
         List<BookItemRequestDto> bookingDtos = List.of(bookingDto);
         BookingDto firstBooking = bookingService.addBooking(secondTestUser.getId(), bookingDto);
-
         List<BookingDto> futureBookings = bookingService.getBooking("FUTURE",
                 secondTestUser.getId(), 0, 3);
         BookingDto futureBooking = futureBookings.get(0);
@@ -266,7 +260,6 @@ public class BookingServiceDBTest {
         List<BookItemRequestDto> bookingDtos = List.of(bookingDto);
         BookingDto firstBooking = bookingService.addBooking(secondTestUser.getId(), bookingDto);
         bookingService.approve(testUser.getId(), firstBooking.getId(), true);
-
         List<BookingDto> pastBookings = bookingService.getBooking("PAST",
                 secondTestUser.getId(), 0, 3);
         BookingDto pastBooking = pastBookings.get(0);
@@ -290,7 +283,6 @@ public class BookingServiceDBTest {
         List<BookItemRequestDto> bookingDtos = List.of(bookingDto);
         BookingDto firstBooking = bookingService.addBooking(secondTestUser.getId(), bookingDto);
         bookingService.approve(testUser.getId(), firstBooking.getId(), true);
-
         List<BookingDto> futureBookings = bookingService.ownerItemsBookingLists("FUTURE",
                 testUser.getId(), 0, 3);
         BookingDto futureBooking = futureBookings.get(0);
@@ -350,5 +342,4 @@ public class BookingServiceDBTest {
         assertThat(booking.getItem().getId(), equalTo(item.getId()));
         assertThat(booking.getItem().getName(), equalTo(item.getName()));
     }
-
 }

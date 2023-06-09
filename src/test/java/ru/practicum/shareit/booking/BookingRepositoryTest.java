@@ -1,6 +1,5 @@
 package ru.practicum.shareit.booking;
 
-
 import org.assertj.core.api.AssertionsForClassTypes;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -23,7 +22,7 @@ import static org.assertj.core.api.AssertionsForInterfaceTypes.assertThat;
 public class BookingRepositoryTest {
 
     @Autowired
-    BookingRepository bookingRepository;
+    private final BookingRepository bookingRepository = null;
     @Autowired
     protected TestEntityManager entityManager;
 
@@ -237,6 +236,4 @@ public class BookingRepositoryTest {
                 .isInstanceOf(Item.class)
                 .hasFieldOrPropertyWithValue("name", "Ultra Ball");
     }
-
-
 }

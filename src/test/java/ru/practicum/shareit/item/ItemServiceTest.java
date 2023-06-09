@@ -38,12 +38,9 @@ import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.ArgumentMatchers.*;
 import static org.mockito.Mockito.when;
 
-
 @MockitoSettings(strictness = Strictness.LENIENT)
 @ExtendWith(MockitoExtension.class)
 public class ItemServiceTest {
-
-
     @InjectMocks
     private ItemServiceImpl itemService;
     @Mock
@@ -64,7 +61,6 @@ public class ItemServiceTest {
                 "1st Item",
                 "All needed thing",
                 true,
-                null,
                 null);
         Mockito.when(userRepository.existsById(ownerId)).thenReturn(true);
         when(userRepository.findById(anyLong())).thenReturn(Optional.of(new User()));
@@ -81,13 +77,11 @@ public class ItemServiceTest {
                 "test",
                 "description",
                 true,
-                null,
                 3L);
         ItemDto updateItemDto = new ItemDto(1L,
                 "test_update",
                 "description_update",
                 true,
-                null,
                 3L);
 
         User user = new User();
@@ -157,7 +151,6 @@ public class ItemServiceTest {
                 "test1",
                 "description1",
                 true,
-                null,
                 null);
         when(userRepository.findById(ownerId)).thenReturn(Optional.empty());
 
@@ -172,7 +165,6 @@ public class ItemServiceTest {
                 null,
                 null,
                 null,
-                null,
                 null);
         ValidationException exception = assertThrows(ValidationException.class, () ->
                 itemService.addItem(owner.getId(), newItem));
@@ -181,7 +173,6 @@ public class ItemServiceTest {
                 null,
                 null,
                 true,
-                null,
                 null);
         assertThrows(ValidationException.class, () -> itemService.addItem(owner.getId(), newItemWithoutName));
         Assertions.assertNotNull(exception);
@@ -190,7 +181,6 @@ public class ItemServiceTest {
                 "testName",
                 null,
                 true,
-                null,
                 null);
         assertThrows(ValidationException.class, () -> itemService.addItem(owner.getId(), newItemWithoutDescription));
     }
@@ -201,7 +191,6 @@ public class ItemServiceTest {
                 "Item1",
                 "new item1",
                 true,
-                null,
                 null);
 
         assertThrows(ValidationException.class, () -> {
@@ -343,16 +332,13 @@ public class ItemServiceTest {
                 "Poke Ball",
                 "The Poke Ball is a sphere",
                 true,
-                null,
                 null));
         expectedResult.add(new ItemDto(2L,
                 "Great Bal",
                 " is a type of Poké Ball that has a 50% higher chance to successfully " +
                         "catch a Pokémon than that of a regular Poké Ball",
                 false,
-                null,
                 null));
-
         List<ItemDto> actualResult = ItemMapper.toItemDtoList(itemList);
 
         assertEquals(expectedResult, actualResult);
@@ -362,7 +348,6 @@ public class ItemServiceTest {
     public void testToItemDtoList_EmptyList() {
         List<Item> itemList = Collections.emptyList();
         List<ItemDto> expectedResult = Collections.emptyList();
-
         List<ItemDto> actualResult = ItemMapper.toItemDtoList(itemList);
 
         assertEquals(expectedResult, actualResult);
@@ -429,7 +414,6 @@ public class ItemServiceTest {
         String text = "";
         int from = 0;
         int size = 10;
-
         List<ItemDto> actualResult = itemService.getItemsText(text, from, size);
 
         assertTrue(actualResult.isEmpty());
@@ -572,9 +556,3 @@ public class ItemServiceTest {
         assertEquals(commentDtoOutput.getCreated(), commentDtoOutputAfter.getCreated());
     }
 }
-
-
-
-
-
-

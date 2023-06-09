@@ -1,6 +1,5 @@
 package ru.practicum.shareit.booking;
 
-
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
@@ -29,7 +28,6 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 
 @WebMvcTest(controllers = BookingController.class)
 public class BookingControllerTest {
-
     @Autowired
     private ObjectMapper mapper;
     @MockBean

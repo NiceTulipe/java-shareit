@@ -6,6 +6,7 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import ru.practicum.shareit.booking.dao.BookingRepository;
 import ru.practicum.shareit.booking.dto.ItemBookingInfoDto;
 import ru.practicum.shareit.booking.mapper.BookingMapper;
@@ -22,11 +23,9 @@ import ru.practicum.shareit.item.mapper.CommentMapper;
 import ru.practicum.shareit.item.mapper.ItemMapper;
 import ru.practicum.shareit.item.model.Comment;
 import ru.practicum.shareit.item.model.Item;
-import ru.practicum.shareit.request.dao.ItemRequestRepository;
 import ru.practicum.shareit.user.dao.UserRepository;
 import ru.practicum.shareit.user.model.User;
 
-import javax.transaction.Transactional;
 import java.time.LocalDateTime;
 import java.util.*;
 
@@ -36,20 +35,17 @@ import static org.springframework.data.domain.Sort.Direction.DESC;
 
 @Service
 @RequiredArgsConstructor
+@Transactional(readOnly = true)
 @Slf4j
 public class ItemServiceImpl implements ItemService {
-
     private final UserRepository userRepository;
     private final ItemRepository itemRepository;
     private final BookingRepository bookingRepository;
     private final CommentRepository commentRepository;
 
-    private final ItemRequestRepository itemRequestRepository;
-
     @Transactional
     @Override
     public ItemDto addItem(Long ownerId, ItemDto itemDto) {
-
         if (ownerId == null) {
             throw new ValidationException("Owner ID не может быть null");
         }
@@ -64,7 +60,6 @@ public class ItemServiceImpl implements ItemService {
         }
         checkOwner(ownerId);
         Item item = ItemMapper.toItem(itemDto);
-
         Optional<User> user = userRepository.findById(ownerId);
         item.setOwner(user.get());
         Item newItem = itemRepository.save(item);
@@ -100,14 +95,12 @@ public class ItemServiceImpl implements ItemService {
         }
     }
 
-    @Transactional
     @Override
     public ItemsDto getItem(Long itemId, Long userId) {
         Item newItem = itemRepository.findById(itemId).orElseThrow(() -> new ObjectNotFoundException("Предмет не найден"));
         return fillWithBookingInfo(List.of(newItem), userId).get(0);
     }
 
-    @Transactional
     @Override
     public List<ItemsDto> getItemsOwner(Long ownerId, int from, int size) {
         Pageable page = PageRequest.of(from / size, size);
@@ -115,7 +108,6 @@ public class ItemServiceImpl implements ItemService {
         return fillWithBookingInfo(itemRepository.findAllByOwnerIdOrderById(ownerId, page), ownerId);
     }
 
-    @Transactional
     @Override
     public List<ItemDto> getItemsText(String text, int from, int size) {
         Pageable page = PageRequest.of(from / size, size);
@@ -159,12 +151,11 @@ public class ItemServiceImpl implements ItemService {
                 .collect(toList());
     }
 
-    //private ItemsDto addBookingAndComment(Item item,
     public ItemsDto addBookingAndComment(Item item,
-                                          Long userId,
-                                          List<Comment> comments,
-                                          List<Booking> bookings,
-                                          LocalDateTime now) {
+                                         Long userId,
+                                         List<Comment> comments,
+                                         List<Booking> bookings,
+                                         LocalDateTime now) {
         if (!item.getOwner().getId().equals(userId)) {
             return ItemMapper.toItemsDto(item, null, null, CommentMapper.commentDtoList(comments));
         }

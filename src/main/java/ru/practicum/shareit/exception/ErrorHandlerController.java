@@ -13,7 +13,6 @@ import java.util.Map;
 @Slf4j
 public class ErrorHandlerController {
 
-
     @ExceptionHandler
     @ResponseStatus(HttpStatus.NOT_FOUND)
     public Map<String, String> handleNotFoundException(final ObjectNotFoundException exception) {
@@ -28,14 +27,6 @@ public class ErrorHandlerController {
                 HttpStatus.INTERNAL_SERVER_ERROR, exception.getMessage());
         return Map.of("Null detected, check your actions", exception.getMessage());
     }
-
-//    @ExceptionHandler
-//    @ResponseStatus(HttpStatus.CONFLICT)
-//    public Map<String, String> handlerEmailConflict(final EmailEarlyContains exception) {
-//        log.warn("Error! Validation fault, server status: '{}' text message: '{}'",
-//                HttpStatus.CONFLICT, exception.getMessage());
-//        return Map.of("EMAIL ERROR. ", exception.getMessage());
-//    }
 
     @ExceptionHandler
     @ResponseStatus(HttpStatus.BAD_REQUEST)

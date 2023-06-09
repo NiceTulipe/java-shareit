@@ -48,6 +48,7 @@ public class ItemController {
         return itemService.getItem(id, userId);
     }
 
+    @Validated
     @GetMapping()
     public List<ItemsDto> getItems(@RequestHeader(value = Headers.IdOwner) Long idOwner,
                                    @PositiveOrZero @RequestParam(defaultValue = "0") Integer from,
@@ -56,6 +57,7 @@ public class ItemController {
         return itemService.getItemsOwner(idOwner, from, size);
     }
 
+    @Validated
     @GetMapping("/search")
     public List<ItemDto> getItems(@RequestParam(name = "text") String text,
                                   @PositiveOrZero @RequestParam(defaultValue = "0") Integer from,

@@ -5,6 +5,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import ru.practicum.shareit.booking.dao.BookingRepository;
 import ru.practicum.shareit.booking.dto.BookItemRequestDto;
 import ru.practicum.shareit.booking.dto.BookingDto;
@@ -19,23 +20,25 @@ import ru.practicum.shareit.item.dao.ItemRepository;
 import ru.practicum.shareit.item.model.Item;
 import ru.practicum.shareit.user.dao.UserRepository;
 import ru.practicum.shareit.user.model.User;
+import ru.practicum.shareit.utils.Pagination;
 
-import javax.transaction.Transactional;
 import java.time.LocalDateTime;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Objects;
 
 import static ru.practicum.shareit.booking.mapper.BookingMapper.toBookingDto;
-
 
 @Service
 @AllArgsConstructor
 @Slf4j
+@Transactional
 public class BookingServiceImpl implements BookingService {
     private final BookingRepository bookingRepository;
     private final ItemRepository itemRepository;
     private final UserRepository userRepository;
+    private final Pagination pagination;
 
-    @Transactional
     @Override
     public BookingDto addBooking(Long bookerId, BookItemRequestDto bookingDto) {
         checkDates(bookingDto);
@@ -52,7 +55,6 @@ public class BookingServiceImpl implements BookingService {
         return toBookingDto(bookingRepository.save(BookingMapper.toBooking(bookingDto, item, user)));
     }
 
-    @Transactional
     @Override
     public BookingDto approve(Long ownerId, Long bookingId, boolean approved) {
         Booking booking = bookingRepository.findById(bookingId).orElseThrow(() ->
@@ -71,9 +73,7 @@ public class BookingServiceImpl implements BookingService {
         return BookingMapper.toBookingDto(booking);
     }
 
-    @Transactional
     @Override
-
     public BookingDto getBooking(Long bookerId, Long id) {
         return bookingRepository.findById(id)
                 .filter(b -> Objects.equals(b.getBooker().getId(), bookerId)
@@ -82,12 +82,12 @@ public class BookingServiceImpl implements BookingService {
                 .orElseThrow(() -> new ObjectNotFoundException("Booking with id= " + bookerId + " not found"));
     }
 
-    @Transactional
     @Override
     public List<BookingDto> getBooking(String state, Long userId, int from, int size) {
+        checkerState(state);
         User user = checkUser(userId);
         BookingState stateFromText = BookingState.getStateFromText(state);
-        Pageable page = PageRequest.of(from / size, size);
+        Pageable page = pagination.getPage(from, size);
         LocalDateTime now = LocalDateTime.now();
         List<Booking> bookings = new ArrayList<>();
         switch (stateFromText) {
@@ -120,10 +120,10 @@ public class BookingServiceImpl implements BookingService {
         return BookingMapper.toBookingDtoList(bookings);
     }
 
-    @Transactional
     @Override
     public List<BookingDto> ownerItemsBookingLists(String state, Long ownerId, int from, int size) {
         User user = checkUser(ownerId);
+        checkerState(state);
         BookingState stateFromText = BookingState.getStateFromText(state);
         Pageable page = PageRequest.of(from / size, size);
         LocalDateTime now = LocalDateTime.now();
@@ -157,7 +157,6 @@ public class BookingServiceImpl implements BookingService {
         return BookingMapper.toBookingDtoList(bookings);
     }
 
-
     public void checkDates(BookItemRequestDto bookingDto) {
         if (bookingDto.getStart().isAfter(bookingDto.getEnd()) ||
                 bookingDto.getStart().isEqual(bookingDto.getEnd())) {
@@ -165,11 +164,18 @@ public class BookingServiceImpl implements BookingService {
         }
     }
 
-
     public User checkUser(Long checkedUserId) {
         User user = userRepository.findById(checkedUserId).orElseThrow(() -> {
             throw new ObjectNotFoundException("Пользователь не найден");
         });
         return user;
+    }
+
+    private void checkerState(String state) {
+        try {
+            BookingState.valueOf(state);
+        } catch (Exception e) {
+            throw new RequestFailedException(String.format("Unknown state: %s", state));
+        }
     }
 }

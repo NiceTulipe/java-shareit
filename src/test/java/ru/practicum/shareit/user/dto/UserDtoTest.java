@@ -10,7 +10,6 @@ import ru.practicum.shareit.user.service.UserService;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
-
 @SpringBootTest
 @AutoConfigureTestDatabase
 @RequiredArgsConstructor(onConstructor_ = @Autowired)
@@ -24,13 +23,10 @@ class UserDtoTest {
         service.addUser(user1);
 
         UserDto updateUser = user1;
-
-
         UserDto userBeforeUpdate = service.updateUser(updateUser);
 
         assertEquals(updateUser.getEmail(), userBeforeUpdate.getEmail());
         assertEquals(updateUser.getName(), userBeforeUpdate.getName());
         assertEquals(updateUser.getId(), userBeforeUpdate.getId());
     }
-
 }

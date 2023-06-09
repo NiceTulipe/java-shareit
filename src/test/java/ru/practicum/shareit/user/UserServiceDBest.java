@@ -34,8 +34,6 @@ public class UserServiceDBest {
     void createUser() {
         UserDto userDto = new UserDto(1L, "ash@gmail.com", "Ash");
         userService.addUser(userDto);
-
-
         TypedQuery<User> query = entityManager
                 .createQuery("Select u from User u where u.email = :email", User.class);
         User user = query
@@ -47,12 +45,10 @@ public class UserServiceDBest {
         assertThat(user.getEmail(), equalTo(userDto.getEmail()));
     }
 
-
     @Test
     void getUserById() {
         UserDto userDto = new UserDto(null, "ash@gmail.com", "Ash");
         userService.addUser(userDto);
-
         UserDto user = userService.getUser(1L);
 
         assertThat(user.getId(), equalTo(1L));
@@ -66,9 +62,7 @@ public class UserServiceDBest {
         UserDto userToUpdate = new UserDto(1L, "Update1ash@gmail.com", "AshUpdate1");
         UserDto userToUpdate2 = new UserDto(1L, "Update2ash@gmail.com", "AshUpdate2");
         UserDto userToUpdate3 = new UserDto(1L, "Update3ash@gmail.com", "AshUpdate3");
-
         userService.addUser(userToCreate);
-
         UserDto updatedUser = userService.updateUser(userToUpdate);
 
         assertThat(updatedUser.getName(), equalTo(userToUpdate.getName()));
@@ -87,10 +81,8 @@ public class UserServiceDBest {
     void deleteUser() {
         UserDto userDto = new UserDto(1L, "ash@gmail.com", "Ash");
         userService.addUser(userDto);
-
         userService.deleteUser(1L);
 
         Assertions.assertThrows(ObjectNotFoundException.class, () -> userService.getUser(1L));
     }
-
 }

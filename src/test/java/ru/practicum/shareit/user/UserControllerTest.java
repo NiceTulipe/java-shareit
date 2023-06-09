@@ -1,6 +1,5 @@
 package ru.practicum.shareit.user;
 
-
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.Test;
@@ -21,7 +20,6 @@ import static org.mockito.ArgumentMatchers.anyLong;
 import static org.mockito.Mockito.*;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
-
 
 @WebMvcTest(controllers = UserController.class)
 public class UserControllerTest {
@@ -76,7 +74,6 @@ public class UserControllerTest {
                 .andExpect(jsonPath("$.id", is(userDto.getId()), Long.class))
                 .andExpect(jsonPath("$.name", is(userDto.getName())));
     }
-
 
     @Test
     void update() throws Exception {
@@ -174,5 +171,4 @@ public class UserControllerTest {
     void deleteUser() {
         userService.deleteUser(anyLong());
     }
-
 }

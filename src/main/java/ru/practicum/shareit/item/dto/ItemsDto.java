@@ -7,8 +7,6 @@ import java.util.List;
 
 @Data
 @AllArgsConstructor
-@Setter
-@Getter
 @Builder
 public class ItemsDto {
     private final Long id;

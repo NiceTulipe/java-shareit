@@ -9,7 +9,6 @@ import java.time.LocalDateTime;
 @AllArgsConstructor
 @NoArgsConstructor
 @Builder
-@ToString
 public class CommentDto {
     private Long id;
     @NotBlank
@@ -17,6 +16,4 @@ public class CommentDto {
     private AuthorDto author;
     private String authorName;
     private LocalDateTime created;
-
-
 }

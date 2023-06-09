@@ -1,6 +1,5 @@
 package ru.practicum.shareit.item;
 
-
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -32,7 +31,6 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 @WebMvcTest(controllers = ItemController.class)
 @AutoConfigureMockMvc
 public class ItemControllerTest {
-
     @Autowired
     private ObjectMapper mapper;
     @Autowired
@@ -40,26 +38,21 @@ public class ItemControllerTest {
     @MockBean
     private ItemService itemService;
 
-
     @Test
     public void testCreateItem() throws Exception {
         ItemDto itemDto = new ItemDto(null,
                 "Poke Ball",
                 "The Poke Ball is a sphere",
                 true,
-                null,
                 null);
 
         ItemDto createdItem = new ItemDto(1L,
                 "Poke Ball",
                 "The Poke Ball is a sphere",
                 true,
-                null,
                 null);
 
-
         given(itemService.addItem(anyLong(), any(ItemDto.class))).willReturn(createdItem);
-
         mockMvc.perform(post("/items")
                         .header(Headers.IdOwner, 1L)
                         .contentType(MediaType.APPLICATION_JSON)
@@ -75,16 +68,13 @@ public class ItemControllerTest {
     public void testGetItem() throws Exception {
         Long itemId = 1L;
         Long userId = 2L;
-
         ItemsDto itemDto = ItemsDto.builder()
                 .id(itemId)
                 .name("Poke Ball")
                 .description("The Poke Ball is a sphere")
                 .available(true)
                 .build();
-
         given(itemService.getItem(itemId, userId)).willReturn(itemDto);
-
         mockMvc.perform(get("/items/{itemId}", itemId)
                         .header(Headers.IdOwner, userId)
                         .contentType(MediaType.APPLICATION_JSON))
@@ -100,7 +90,6 @@ public class ItemControllerTest {
         Long ownerId = 1L;
         Integer from = 0;
         Integer size = 10;
-
         List<ItemsDto> items = List.of(
                 ItemsDto.builder()
                         .id(1L)
@@ -113,11 +102,8 @@ public class ItemControllerTest {
                         .name("Ultra Ball")
                         .description("is a Poke Ball that has a 2x catch rate modifier")
                         .available(false)
-                        .build()
-        );
-
+                        .build());
         given(itemService.getItemsOwner(ownerId, from, size)).willReturn(items);
-
         mockMvc.perform(get("/items")
                         .header(Headers.IdOwner, ownerId)
                         .param("from", "0")
@@ -139,24 +125,18 @@ public class ItemControllerTest {
         String text = "test";
         Integer from = 0;
         Integer size = 10;
-
         List<ItemDto> items = List.of(
                 new ItemDto(1L,
                         "Poke Ball",
                         "The Poke Ball is a sphere",
                         true,
-                        null,
                         123L),
                 new ItemDto(2L,
                         "Ultra Ball",
                         "is a Poke Ball that has a 2x catch rate modifier",
                         false,
-                        null,
-                        456L)
-        );
-
+                        456L));
         given(itemService.getItemsText(text, from, size)).willReturn(items);
-
         mockMvc.perform(get("/items/search")
                         .param("text", text)
                         .param("from", "0")
@@ -183,11 +163,8 @@ public class ItemControllerTest {
         ItemDto itemDto = new ItemDto(itemId, "updated item",
                 "updated description",
                 true,
-                null,
                 null);
-
         given(itemService.update(ownerId, itemId, itemDto)).willReturn(itemDto);
-
         mockMvc.perform(patch("/items/{id}", itemId)
                         .header(Headers.IdOwner, ownerId)
                         .content(asJsonString(itemDto))
@@ -213,9 +190,7 @@ public class ItemControllerTest {
                 .authorName("Test Author")
                 .created(LocalDateTime.now())
                 .build();
-
         given(itemService.addComment(authorId, itemId, commentDto)).willReturn(expectedComment);
-
         mockMvc.perform(post("/items/{id}/comment", itemId)
                         .header(Headers.IdOwner, authorId)
                         .content(asJsonString(commentDto))
@@ -238,9 +213,7 @@ public class ItemControllerTest {
     @Test
     void addInvalidComment_shouldReturnStatus400() throws Exception {
         CommentDto commentDto = CommentDto.builder().id(1L).text("testText").authorName("testName").build();
-
         CommentDto invalidCommentDto = CommentDto.builder().id(1L).text("").authorName("testName").build();
-
         when(itemService.addComment(any(), anyLong(), any()))
                 .thenReturn(commentDto);
         mockMvc.perform(post("/items/1/comment")

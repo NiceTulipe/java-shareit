@@ -41,26 +41,21 @@ import static org.mockito.Mockito.when;
 @MockitoSettings(strictness = Strictness.LENIENT)
 public class RequestServiceUnitTest {
 
-    ItemRequestRepository mockItemRequestRepository = Mockito.mock(ItemRequestRepository.class);
-    UserRepository mockUserRepository = Mockito.mock(UserRepository.class);
-    ItemRepository mockItemRepository = Mockito.mock(ItemRepository.class);
-
-    ItemRequestService mockItemRewuestService = Mockito.mock((ItemRequestService.class));
-
-    UserService mockUserService = Mockito.mock(UserService.class);
-
+    private final ItemRequestRepository mockItemRequestRepository = Mockito.mock(ItemRequestRepository.class);
+    private final UserRepository mockUserRepository = Mockito.mock(UserRepository.class);
+    private final ItemRepository mockItemRepository = Mockito.mock(ItemRepository.class);
+    private final ItemRequestService mockItemRequestService = Mockito.mock(ItemRequestService.class);
+    private final UserService mockUserService = Mockito.mock(UserService.class);
 
     @InjectMocks
     private ItemRequestServiceImpl itemRequestService;
+
     private User user;
     private UserService userService;
     private ItemRequestDto itemRequestDto;
     private ItemRequest itemRequest;
     private Item item;
 
-    private final ItemRequestService requestService = new ItemRequestServiceImpl(mockItemRepository,
-            mockItemRequestRepository,
-            mockUserRepository);
 
     @BeforeEach
     void start() {
@@ -77,7 +72,7 @@ public class RequestServiceUnitTest {
 
         ItemRequestDto itemRequestDto = new ItemRequestDto(null, "is a Poke Ball that has a 2x catch rate modifier", null, LocalDateTime.now(), null);
 
-        ItemRequestDto newItemRequestDto = requestService.create(1, itemRequestDto);
+        ItemRequestDto newItemRequestDto = itemRequestService.create(1, itemRequestDto);
 
         Assertions.assertNotNull(newItemRequestDto);
         assertEquals(newItemRequestDto.getDescription(), itemRequestDto.getDescription());
@@ -168,5 +163,4 @@ public class RequestServiceUnitTest {
 
         assertEquals(expectedItemRequestDtoList, actualItemRequestDtoList);
     }
-
 }

@@ -1,6 +1,5 @@
 package ru.practicum.shareit.request;
 
-
 import lombok.RequiredArgsConstructor;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
@@ -19,12 +18,10 @@ import java.time.LocalDateTime;
         webEnvironment = SpringBootTest.WebEnvironment.NONE)
 @RequiredArgsConstructor(onConstructor_ = @Autowired)
 public class RequestServiceIntegTest {
-
     private final ItemRequestService requestService;
     private final UserService userService;
 
     @BeforeEach
-
     public void setUp() {
         createRequestor();
     }

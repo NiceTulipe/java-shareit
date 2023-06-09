@@ -14,7 +14,6 @@ import java.util.List;
 
 public interface BookingRepository extends JpaRepository<Booking, Long> {
 
-
     @Query("select b from Booking b " +
             "where b.item.owner.id = ?1 order by b.start desc ")
     List<Booking> findAllByOwnerItems(@Param("owner") long ownerId, Pageable page);
@@ -42,7 +41,6 @@ public interface BookingRepository extends JpaRepository<Booking, Long> {
             Long ownerId,
             LocalDateTime time,
             Pageable page);
-
 
     @Query("select b " +
             "from Booking b " +

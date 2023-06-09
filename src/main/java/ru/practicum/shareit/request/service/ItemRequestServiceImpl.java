@@ -26,13 +26,13 @@ import java.util.stream.Collectors;
 @Service
 @RequiredArgsConstructor
 @Slf4j
+@Transactional
 public class ItemRequestServiceImpl implements ItemRequestService {
 
     private final ItemRepository itemRepository;
     private final ItemRequestRepository itemRequestRepository;
     private final UserRepository userRepository;
 
-    @Transactional
     @Override
     public ItemRequestDto create(long userId, ItemRequestDto itemRequestDto) {
         User user = checkUser(userId);
@@ -44,7 +44,7 @@ public class ItemRequestServiceImpl implements ItemRequestService {
         return ItemRequestMapper.toItemRequestDto(itemRequest);
     }
 
-    @Transactional
+    @Transactional(readOnly = true)
     @Override
     public ItemRequestDto getById(long userId, long requestId) {
         User user = checkUser(userId);
@@ -56,7 +56,7 @@ public class ItemRequestServiceImpl implements ItemRequestService {
         return itemRequestDto;
     }
 
-    @Transactional
+    @Transactional(readOnly = true)
     @Override
     public List<ItemRequestDto> getAllUserRequest(Long userId) {
         User requestor = checkUser(userId);
@@ -66,7 +66,7 @@ public class ItemRequestServiceImpl implements ItemRequestService {
         return itemRequestDtoList;
     }
 
-    @Transactional
+    @Transactional(readOnly = true)
     @Override
     public List<ItemRequestDto> getAllRequest(Long userId, Integer from, Integer size) {
         if (!userRepository.existsById(userId)) {
@@ -103,5 +103,4 @@ public class ItemRequestServiceImpl implements ItemRequestService {
             requestDto.setItems(ItemMapper.toItemDtoList(itemList));
         });
     }
-
 }
