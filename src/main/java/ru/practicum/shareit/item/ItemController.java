@@ -21,6 +21,7 @@ import java.util.List;
  */
 @RestController
 @AllArgsConstructor
+@Validated
 @RequestMapping("/items")
 @Slf4j
 public class ItemController {
@@ -48,7 +49,7 @@ public class ItemController {
         return itemService.getItem(id, userId);
     }
 
-    @Validated
+
     @GetMapping()
     public List<ItemsDto> getItems(@RequestHeader(value = Headers.IdOwner) Long idOwner,
                                    @PositiveOrZero @RequestParam(defaultValue = "0") Integer from,
@@ -57,7 +58,6 @@ public class ItemController {
         return itemService.getItemsOwner(idOwner, from, size);
     }
 
-    @Validated
     @GetMapping("/search")
     public List<ItemDto> getItems(@RequestParam(name = "text") String text,
                                   @PositiveOrZero @RequestParam(defaultValue = "0") Integer from,
@@ -69,7 +69,8 @@ public class ItemController {
     @PostMapping("/{id}/comment")
     public CommentDto addComment(@RequestHeader(value = Headers.IdOwner) Long authorId,
                                  @PathVariable Long id,
-                                 @Validated @RequestBody CommentDto commentBody) {
+                                 @Valid @RequestBody CommentDto commentBody) {
+        log.info("Получен запрос на добавление комментария к предмету под номером к эндпоинту: 'POST /items/{id}/comment'");
         return itemService.addComment(authorId, id, commentBody);
     }
 }

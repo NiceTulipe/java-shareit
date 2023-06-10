@@ -12,6 +12,7 @@ import org.mockito.junit.jupiter.MockitoSettings;
 import org.mockito.quality.Strictness;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import ru.practicum.shareit.exception.ObjectNotFoundException;
 import ru.practicum.shareit.item.dao.ItemRepository;
@@ -145,7 +146,10 @@ public class RequestServiceUnitTest {
         requestor.setId(2L);
         itemRequest.setRequestor(requestor);
         itemRequests.add(itemRequest);
-        when(mockItemRequestRepository.findAllByRequestorIdNot(userId, PageRequest.of(from / size, size, Sort.by(Sort.Direction.DESC, "created"))))
+        Sort sort = Sort.by(Sort.Direction.DESC, "created");
+        Pageable page = PageRequest.of(from / size, size, sort);
+        when(mockItemRequestRepository.findAllByRequestorIdNot(userId,
+                page))
                 .thenReturn(new PageImpl<>(itemRequests));
         when(mockUserRepository.findById(requestor.getId())).thenReturn(Optional.of(requestor));
         List<ItemRequestDto> expectedItemRequestDtoList = new ArrayList<>();

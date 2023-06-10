@@ -4,6 +4,7 @@ import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import ru.practicum.shareit.booking.dao.BookingRepository;
@@ -20,7 +21,6 @@ import ru.practicum.shareit.item.dao.ItemRepository;
 import ru.practicum.shareit.item.model.Item;
 import ru.practicum.shareit.user.dao.UserRepository;
 import ru.practicum.shareit.user.model.User;
-import ru.practicum.shareit.utils.Pagination;
 
 import java.time.LocalDateTime;
 import java.util.ArrayList;
@@ -37,7 +37,6 @@ public class BookingServiceImpl implements BookingService {
     private final BookingRepository bookingRepository;
     private final ItemRepository itemRepository;
     private final UserRepository userRepository;
-    private final Pagination pagination;
 
     @Override
     public BookingDto addBooking(Long bookerId, BookItemRequestDto bookingDto) {
@@ -87,7 +86,8 @@ public class BookingServiceImpl implements BookingService {
         checkerState(state);
         User user = checkUser(userId);
         BookingState stateFromText = BookingState.getStateFromText(state);
-        Pageable page = pagination.getPage(from, size);
+        Sort sort = Sort.unsorted();
+        Pageable page = PageRequest.of(from / size, size);
         LocalDateTime now = LocalDateTime.now();
         List<Booking> bookings = new ArrayList<>();
         switch (stateFromText) {

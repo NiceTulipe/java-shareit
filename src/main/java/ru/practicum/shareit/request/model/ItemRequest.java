@@ -6,7 +6,6 @@ import lombok.NoArgsConstructor;
 import ru.practicum.shareit.user.model.User;
 
 import javax.persistence.*;
-import javax.validation.constraints.Positive;
 import java.time.LocalDateTime;
 
 ///**
@@ -19,7 +18,6 @@ import java.time.LocalDateTime;
 @Entity
 @Table(name = "requests")
 public class ItemRequest {
-    @Positive
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
