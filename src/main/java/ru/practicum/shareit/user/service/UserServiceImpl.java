@@ -11,14 +11,12 @@ import ru.practicum.shareit.user.model.User;
 
 import java.util.List;
 
-
 @Service
 @AllArgsConstructor
+@Transactional
 public class UserServiceImpl implements UserService {
-
     private final UserRepository userStorage;
 
-    @Transactional
     @Override
     public UserDto addUser(UserDto userDto) {
         User user = UserMapper.toUserModel(userDto);
@@ -26,13 +24,11 @@ public class UserServiceImpl implements UserService {
         return UserMapper.toUserDto(newUser);
     }
 
-    @Transactional
     @Override
     public void deleteUser(Long userId) {
         userStorage.deleteById(userId);
     }
 
-    @Transactional
     @Override
     public UserDto updateUser(UserDto userDto) {
         User user = userStorage.findById(userDto.getId()).orElseThrow(() ->
@@ -47,13 +43,13 @@ public class UserServiceImpl implements UserService {
         return UserMapper.toUserDto(user);
     }
 
-    @Transactional
+    @Transactional(readOnly = true)
     @Override
     public List<UserDto> getUsersList() {
         return UserMapper.toUserDtoList(userStorage.findAll());
     }
 
-    @Transactional
+    @Transactional(readOnly = true)
     @Override
     public UserDto getUser(Long id) {
         return UserMapper.toUserDto(userStorage.findById(id).orElseThrow(() ->

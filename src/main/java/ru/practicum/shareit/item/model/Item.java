@@ -1,22 +1,23 @@
 package ru.practicum.shareit.item.model;
 
-import lombok.*;
+import lombok.AllArgsConstructor;
+import lombok.Builder;
+import lombok.Data;
+import lombok.NoArgsConstructor;
 import ru.practicum.shareit.user.model.User;
 
 import javax.persistence.*;
-import javax.validation.constraints.Positive;
 
 /**
  * TODO Sprint add-controllers.
  */
 @AllArgsConstructor
-@Getter
-@Setter
+@Data
 @NoArgsConstructor
 @Entity
 @Table(name = "items")
+@Builder
 public class Item {
-    @Positive
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
@@ -34,5 +35,6 @@ public class Item {
     @JoinColumn(name = "owner_id")
     private User owner;
 
-    private Long request;
+    @Column(name = "request")
+    private Long requestId;
 }

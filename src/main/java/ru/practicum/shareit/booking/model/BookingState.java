@@ -3,7 +3,6 @@ package ru.practicum.shareit.booking.model;
 import lombok.AllArgsConstructor;
 import ru.practicum.shareit.exception.RequestFailedException;
 
-
 @AllArgsConstructor
 public enum BookingState {
     ALL, CURRENT, PAST, FUTURE, WAITING, REJECTED;

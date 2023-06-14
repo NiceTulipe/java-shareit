@@ -2,8 +2,11 @@ package ru.practicum.shareit.item.service;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import ru.practicum.shareit.booking.dao.BookingRepository;
 import ru.practicum.shareit.booking.dto.ItemBookingInfoDto;
 import ru.practicum.shareit.booking.mapper.BookingMapper;
@@ -23,7 +26,6 @@ import ru.practicum.shareit.item.model.Item;
 import ru.practicum.shareit.user.dao.UserRepository;
 import ru.practicum.shareit.user.model.User;
 
-import javax.transaction.Transactional;
 import java.time.LocalDateTime;
 import java.util.*;
 
@@ -33,9 +35,9 @@ import static org.springframework.data.domain.Sort.Direction.DESC;
 
 @Service
 @RequiredArgsConstructor
+@Transactional(readOnly = true)
 @Slf4j
 public class ItemServiceImpl implements ItemService {
-
     private final UserRepository userRepository;
     private final ItemRepository itemRepository;
     private final BookingRepository bookingRepository;
@@ -44,15 +46,14 @@ public class ItemServiceImpl implements ItemService {
     @Transactional
     @Override
     public ItemDto addItem(Long ownerId, ItemDto itemDto) {
-
         if (ownerId == null) {
             throw new ValidationException("Owner ID не может быть null");
         }
         if (itemDto.getName() == null || itemDto.getName().isBlank()) {
-            throw new ValidationException("Название не может быть пустой");
+            throw new ValidationException("Название не может быть пустым");
         }
         if (itemDto.getDescription() == null || itemDto.getDescription().isBlank()) {
-            throw new ValidationException("Описание не может быть пустой");
+            throw new ValidationException("Описание не может быть пустым");
         }
         if (itemDto.getAvailable() == null) {
             throw new ValidationException("Статус не может быть пустой");
@@ -86,35 +87,34 @@ public class ItemServiceImpl implements ItemService {
             if (item.getDescription() == null || item.getDescription().isBlank()) {
                 item.setDescription(oldItem.getDescription());
             }
-            if (item.getRequest() == null) {
-                item.setRequest(oldItem.getRequest());
+            if (item.getRequestId() == null) {
+                item.setRequestId(oldItem.getRequestId());
             }
             Item newItem = itemRepository.save(item);
             return ItemMapper.toItemDto(newItem);
         }
     }
 
-    @Transactional
     @Override
     public ItemsDto getItem(Long itemId, Long userId) {
         Item newItem = itemRepository.findById(itemId).orElseThrow(() -> new ObjectNotFoundException("Предмет не найден"));
         return fillWithBookingInfo(List.of(newItem), userId).get(0);
     }
 
-    @Transactional
     @Override
-    public List<ItemsDto> getItemsOwner(Long ownerId) {
+    public List<ItemsDto> getItemsOwner(Long ownerId, int from, int size) {
+        Pageable page = PageRequest.of(from / size, size);
         checkOwner(ownerId);
-        return fillWithBookingInfo(itemRepository.findAllByOwnerIdOrderById(ownerId), ownerId);
+        return fillWithBookingInfo(itemRepository.findAllByOwnerIdOrderById(ownerId, page), ownerId);
     }
 
-    @Transactional
     @Override
-    public List<ItemDto> getItemsText(String text) {
+    public List<ItemDto> getItemsText(String text, int from, int size) {
+        Pageable page = PageRequest.of(from / size, size);
         if (text.isBlank()) {
             return Collections.emptyList();
         }
-        return ItemMapper.toItemDtoList(itemRepository.getItemsText(text));
+        return ItemMapper.toItemDtoList(itemRepository.getItemsText(text, page));
     }
 
     @Override
@@ -124,7 +124,8 @@ public class ItemServiceImpl implements ItemService {
                 new ObjectNotFoundException("Автор не найден"));
         Item item = itemRepository.findById(itemId).orElseThrow(() ->
                 new ObjectNotFoundException("Предмет не найден"));
-        List<Booking> authorBooked = bookingRepository.findBookingsByItem(item, BookingStatus.APPROVED, authorId, LocalDateTime.now());
+        List<Booking> authorBooked = bookingRepository
+                .findBookingsByItem(item, BookingStatus.APPROVED, authorId, LocalDateTime.now());
         if (authorBooked.isEmpty()) {
             throw new ValidationException("Неверные параметры");
         }
@@ -150,11 +151,11 @@ public class ItemServiceImpl implements ItemService {
                 .collect(toList());
     }
 
-    private ItemsDto addBookingAndComment(Item item,
-                                          Long userId,
-                                          List<Comment> comments,
-                                          List<Booking> bookings,
-                                          LocalDateTime now) {
+    public ItemsDto addBookingAndComment(Item item,
+                                         Long userId,
+                                         List<Comment> comments,
+                                         List<Booking> bookings,
+                                         LocalDateTime now) {
         if (!item.getOwner().getId().equals(userId)) {
             return ItemMapper.toItemsDto(item, null, null, CommentMapper.commentDtoList(comments));
         }
