@@ -9,7 +9,6 @@ import ru.practicum.shareit.item.dto.ItemsDto;
 import ru.practicum.shareit.item.service.ItemService;
 import ru.practicum.shareit.utils.Headers;
 
-import javax.validation.constraints.NotNull;
 import java.util.List;
 
 /**
@@ -24,7 +23,7 @@ public class ItemController {
 
     @PostMapping()
     public ItemDto create(@RequestHeader(value = Headers.IdOwner) Long idOwner,
-                          @RequestBody @NotNull ItemDto item) {
+                          @RequestBody ItemDto item) {
         log.info("Получен запрос на создание нового предмета к эндпоинту: 'POST /items'");
         return itemService.addItem(idOwner, item);
     }
