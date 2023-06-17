@@ -34,7 +34,6 @@ public class UserControllerTest {
     @MockBean
     UserClient userClient;
 
-
     @Test
     void addUser() throws Exception {
         UserDto userDto = new UserDto(1L, "Ash", "ash@gmail.com");
